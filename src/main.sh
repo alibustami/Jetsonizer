@@ -22,6 +22,7 @@ CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the m
     "Install MiniConda" \
     "Install PyTorch with CUDA acceleration" \
     "Install VS Code" \
+    "Install uv" \
     "Link TensorRT with a Conda Environment Interpreter" \
     "Generate SSH Key" \
     --header.foreground="82" \
@@ -33,3 +34,6 @@ if echo "$CHOICES" | grep -q "Install VS Code"; then
 fi
 
 
+if echo "$CHOICES" | grep -q "Install uv"; then
+    bash src/modules/install_uv.sh
+fi
