@@ -28,12 +28,24 @@ CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the m
     --header.foreground="82" \
     --selected.foreground="82" \
     --cursor.foreground="82")
-
+if echo "$CHOICES" | grep -q "Build OpenCV from source"; then
+    bash src/modules/build_opencv.sh
+fi
+if echo "$CHOICES" | grep -q "Install MiniConda"; then
+    bash src/modules/install_miniconda.sh
+fi
+if echo "$CHOICES" | grep -q "Install PyTorch with CUDA acceleration"; then
+    bash src/modules/install_pytorch.sh
+fi
 if echo "$CHOICES" | grep -q "Install VS Code"; then
     bash src/modules/install_vscode.sh
 fi
-
-
 if echo "$CHOICES" | grep -q "Install uv"; then
     bash src/modules/install_uv.sh
+fi
+if echo "$CHOICES" | grep -q "Link TensorRT with a Conda Environment Interpreter"; then
+    bash src/modules/link_tensorrt_conda.sh
+fi
+if echo "$CHOICES" | grep -q "Generate SSH Key"; then
+    bash src/modules/generate_ssh_key.sh
 fi
