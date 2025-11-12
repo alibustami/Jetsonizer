@@ -18,7 +18,7 @@ gum style --foreground 82 --bold "System Architecture: $SYSTEM_ARCH"
 gum style --foreground 82 --bold "Python Version: $JETSON_PYTHON_VERSION"
 
 CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the menu (use <space> to select):" \
-    "Build OpenCV from source" \
+    "Install OpenCV with CUDA enabled" \
     "Install MiniConda" \
     "Install PyTorch with CUDA acceleration" \
     "Install VS Code" \
@@ -28,8 +28,8 @@ CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the m
     --header.foreground="82" \
     --selected.foreground="82" \
     --cursor.foreground="82")
-if echo "$CHOICES" | grep -q "Build OpenCV from source"; then
-    bash src/modules/build_opencv.sh
+if echo "$CHOICES" | grep -q "Install OpenCV with CUDA enabled"; then
+    bash src/modules/install_opencv.sh
 fi
 if echo "$CHOICES" | grep -q "Install MiniConda"; then
     bash src/modules/install_miniconda.sh
