@@ -35,7 +35,7 @@ if echo "$CHOICES" | grep -q "Install MiniConda"; then
     bash src/modules/install_miniconda.sh
 fi
 if echo "$CHOICES" | grep -q "Install PyTorch with CUDA acceleration"; then
-    bash src/modules/install_pytorch.sh
+    bash src/modules/install_torch.sh
 fi
 if echo "$CHOICES" | grep -q "Install VS Code"; then
     bash src/modules/install_vscode.sh
