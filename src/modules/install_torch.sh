@@ -142,6 +142,9 @@ fi
 gum spin --spinner dot --title "Upgrading pip for $PYTHON_BIN..." --spinner.foreground="82" -- \
     "$PYTHON_BIN" -m pip install --upgrade pip >/dev/null
 
+gum spin --spinner dot --title "Installing numpy==2.1 ..." --spinner.foreground="82" -- \
+    "$PYTHON_BIN" -m pip install --break-system-packages --force-reinstall "numpy==2.1" >/dev/null
+
 ensure_downloader() {
     if command -v wget &> /dev/null; then
         echo "wget"
