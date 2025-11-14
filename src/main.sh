@@ -25,6 +25,7 @@ CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the m
     "Install uv" \
     "Link TensorRT with a Conda Environment Interpreter" \
     "Generate SSH Key" \
+    "install jtop" \
     --header.foreground="82" \
     --selected.foreground="82" \
     --cursor.foreground="82")
@@ -48,4 +49,7 @@ if echo "$CHOICES" | grep -q "Link TensorRT with a Conda Environment Interpreter
 fi
 if echo "$CHOICES" | grep -q "Generate SSH Key"; then
     bash src/modules/generate_ssh_key.sh
+fi
+if echo "$CHOICES" | grep -q "install jtop"; then
+    bash src/modules/install_jtop.sh
 fi
