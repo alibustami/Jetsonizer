@@ -23,7 +23,7 @@ CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the m
     "Install PyTorch with CUDA acceleration" \
     "Install VS Code" \
     "Install uv" \
-    "Link TensorRT with a Conda Environment Interpreter" \
+    "Install TensorRT" \
     "Generate SSH Key" \
     "install jtop" \
     --header.foreground="82" \
@@ -44,8 +44,8 @@ fi
 if echo "$CHOICES" | grep -q "Install uv"; then
     bash src/modules/install_uv.sh
 fi
-if echo "$CHOICES" | grep -q "Link TensorRT with a Conda Environment Interpreter"; then
-    bash src/modules/link_tensorrt_conda.sh
+if echo "$CHOICES" | grep -q "Install TensorRT"; then
+    bash src/modules/link_tensorrt.sh
 fi
 if echo "$CHOICES" | grep -q "Generate SSH Key"; then
     bash src/modules/generate_ssh_key.sh
