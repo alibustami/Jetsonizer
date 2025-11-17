@@ -24,8 +24,7 @@ CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the m
     "Install VS Code" \
     "Install uv" \
     "Install TensorRT" \
-    "Generate SSH Key" \
-    "install jtop" \
+    "Install jtop" \
     --header.foreground="82" \
     --selected.foreground="82" \
     --cursor.foreground="82")
@@ -47,9 +46,6 @@ fi
 if echo "$CHOICES" | grep -q "Install TensorRT"; then
     bash src/modules/link_tensorrt.sh
 fi
-if echo "$CHOICES" | grep -q "Generate SSH Key"; then
-    bash src/modules/generate_ssh_key.sh
-fi
-if echo "$CHOICES" | grep -q "install jtop"; then
+if echo "$CHOICES" | grep -q "Install jtop"; then
     bash src/modules/install_jtop.sh
 fi
