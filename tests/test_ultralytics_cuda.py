@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 from pathlib import Path
 from typing import Tuple
 
@@ -28,6 +29,21 @@ def should_draw_overlay(mode: str, video_path: Path) -> bool:
         return False
     # Auto mode: skip plotting when the bundled demo already has boxes burned in.
     return resolved != default_video
+
+
+def overlay_fps_text(frame, fps: float) -> None:
+    """Put an FPS counter on the frame."""
+    label = f"FPS: {fps:.1f}" if fps > 0 else "FPS: --"
+    cv2.putText(
+        frame,
+        label,
+        (10, 30),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.0,
+        (0, 255, 0),
+        2,
+        cv2.LINE_AA,
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -150,6 +166,8 @@ def stream_video(
     ensure_window(window_title)
 
     frame_count = 0
+    prev_time = time.perf_counter()
+    fps_value = 0.0
     try:
         while True:
             ok, frame = cap.read()
@@ -171,6 +189,14 @@ def stream_video(
                 annotated = results[0].plot()  # Ultralytics already copies the frame.
             else:
                 annotated = frame
+
+            now = time.perf_counter()
+            elapsed = now - prev_time
+            prev_time = now
+            if elapsed > 0:
+                instant_fps = 1.0 / elapsed
+                fps_value = instant_fps if fps_value == 0.0 else (0.85 * fps_value + 0.15 * instant_fps)
+            overlay_fps_text(annotated, fps_value)
 
             cv2.imshow(window_title, annotated)
             key = cv2.waitKey(1) & 0xFF
