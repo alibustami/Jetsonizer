@@ -2,9 +2,30 @@
 
 set -euo pipefail
 
+TARGET_USER="${SUDO_USER:-$(id -un)}"
+TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6 || true)"
+if [ -z "$TARGET_HOME" ] && [ -n "$TARGET_USER" ]; then
+    TARGET_HOME="$(eval echo "~$TARGET_USER" 2> /dev/null || true)"
+fi
+if [ -z "$TARGET_HOME" ]; then
+    TARGET_HOME="${HOME:-}"
+fi
+if [ -z "$TARGET_HOME" ]; then
+    gum style --foreground 196 --bold "❌ Unable to determine home directory for $TARGET_USER."
+    exit 1
+fi
+
+TARGET_GROUP="$(id -gn "$TARGET_USER" 2>/dev/null || echo "$TARGET_USER")"
+
 ORIGINAL_PATH="${PATH:-}"
-PATH="$HOME/.local/bin:$PATH"
-export PATH
+PATH="$TARGET_HOME/.local/bin:$PATH"
+HOME="$TARGET_HOME"
+export PATH HOME
+
+mkdir -p "$TARGET_HOME/.local/bin"
+if [ "$(id -u)" -eq 0 ] && [ -n "$TARGET_USER" ]; then
+    chown "$TARGET_USER":"$TARGET_GROUP" "$TARGET_HOME/.local/bin" 2> /dev/null || true
+fi
 
 path_contains_dir() {
     local dir="$1"
@@ -20,7 +41,7 @@ append_path_to_profiles() {
     [ -z "$dir" ] && return
 
     local export_line="export PATH=\"$dir:\$PATH\""
-    local profiles=("$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile")
+    local profiles=("$TARGET_HOME/.bashrc" "$TARGET_HOME/.zshrc" "$TARGET_HOME/.profile")
     if [ -n "${ZDOTDIR:-}" ] && [ "$ZDOTDIR" != "$HOME" ]; then
         profiles+=("$ZDOTDIR/.zshrc")
     fi
@@ -43,6 +64,9 @@ append_path_to_profiles() {
             echo "# Added by Jetsonizer to expose uv globally"
             echo "$export_line"
         } >> "$profile"
+        if [ "$(id -u)" -eq 0 ] && [ -n "$TARGET_USER" ]; then
+            chown "$TARGET_USER":"$TARGET_GROUP" "$profile" 2> /dev/null || true
+        fi
         gum style --foreground 82 --bold "✅ Added PATH update to $profile"
     done
 }
@@ -92,7 +116,16 @@ detect_uv_binary() {
     return 1
 }
 
-INSTALL_CMD="curl -LsSf https://astral.sh/uv/install.sh | sh"
+run_uv_install() {
+    local install_dir="$TARGET_HOME/.local/bin"
+    local install_cmd='curl -LsSf https://astral.sh/uv/install.sh | sh'
+
+    if [ "$(id -u)" -eq 0 ] && [ "$TARGET_USER" != "root" ]; then
+        sudo -u "$TARGET_USER" HOME="$TARGET_HOME" PATH="$install_dir:${ORIGINAL_PATH:-}" UV_INSTALL_DIR="$install_dir" sh -c "$install_cmd"
+    else
+        HOME="$TARGET_HOME" PATH="$install_dir:${ORIGINAL_PATH:-}" UV_INSTALL_DIR="$install_dir" sh -c "$install_cmd"
+    fi
+}
 
 gum spin --spinner dot --title "Preparing uv installation..." --spinner.foreground="82" -- sleep 2
 
@@ -115,7 +148,7 @@ if EXISTING_UV_BIN=$(detect_uv_binary); then
 fi
 
 gum style --foreground 82 --bold "Installing uv..."
-if ! eval "$INSTALL_CMD"; then
+if ! run_uv_install; then
     gum style --foreground 196 --bold "❌ uv installation command failed."
     exit 1
 fi
