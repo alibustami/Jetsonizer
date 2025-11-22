@@ -7,7 +7,7 @@ SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SRC_ROOT/.." && pwd)"
 CHECK_PIP_SCRIPT="$SRC_ROOT/utils/check_pip.sh"
 CUDA_NPP_SCRIPT="$SRC_ROOT/utils/ensure_cuda_npp.sh"
-OPENCV_CUDA_TEST_SCRIPT="$REPO_ROOT/tests/test_opencv_cuda.sh"
+OPENCV_CUDA_TEST_SCRIPT="$SRC_ROOT/tests/test_opencv_cuda.sh"
 
 WHEEL_URL="https://pypi.jetson-ai-lab.io/sbsa/cu130/+f/6e7/7b9ad7aeba994/opencv_contrib_python_rolling-4.13.0-cp312-cp312-linux_aarch64.whl"
 WHEEL_SHA256="6e77b9ad7aeba994db0b443c047a4729c379a21617f64497c0d22f992d9b7be2"

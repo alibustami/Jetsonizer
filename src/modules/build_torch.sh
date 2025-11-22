@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CHECK_PIP_SCRIPT="$SRC_ROOT/utils/check_pip.sh"
 CUDA_NPP_SCRIPT="$SRC_ROOT/utils/ensure_cuda_npp.sh"
-TORCH_CUDA_TEST_SCRIPT="$SRC_ROOT/../tests/test_torch_cuda.py"
+TORCH_CUDA_TEST_SCRIPT="$SRC_ROOT/tests/test_torch_cuda.py"
 REQUIRED_CUDA_LIBS=(
     "libcudart.so.13"
     "libcublas.so.13"

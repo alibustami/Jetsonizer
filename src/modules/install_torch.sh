@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SRC_ROOT/.." && pwd)"
 CHECK_PIP_SCRIPT="$SRC_ROOT/utils/check_pip.sh"
-TORCH_CUDA_TEST_SCRIPT="$REPO_ROOT/tests/test_torch_cuda.py"
+TORCH_CUDA_TEST_SCRIPT="$SRC_ROOT/tests/test_torch_cuda.py"
 PYTHON_BIN="python3"
 
 gum style --foreground 82 --bold "Installing PyTorch + torchvision from the CUDA 13.0 wheel index..."
