@@ -1,7 +1,31 @@
 #!/bin/bash
 
+BASE_DIR="$(dirname "$(realpath "$0")")"
+MODULES_DIR="$BASE_DIR/modules"
+UTILS_DIR="$BASE_DIR/utils"
+
+function show_help() {
+    echo "Jetsonizer - The Ultimate NVIDIA Jetson Setup Tool"
+    echo ""
+    echo "Usage: jetsonizer [options]"
+    echo ""
+    echo "Description:"
+    echo "  Jetsonizer automates the installation of complex components like OpenCV (CUDA),"
+    echo "  PyTorch, TensorRT, and development tools on NVIDIA Jetson devices."
+    echo ""
+    echo "Options:"
+    echo "  -h, --help    Show this help message and exit"
+    echo ""
+}
+
+if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+    show_help
+    exit 0
+fi
+
 if ! command -v gum &> /dev/null; then
-    bash src/utils/gum_installation.sh
+    echo "Gum not found. Installing dependencies (requires sudo)..."
+    sudo bash "$UTILS_DIR/gum_installation.sh"
 fi
 
 gum style \
@@ -9,15 +33,19 @@ gum style \
     --align center --width 50 --margin "1 2" --padding "2 4" \
     'JETSONIZER'
 
-gum spin --spinner dot --title "Gathering Jetson system information..." --spinner.foreground="82" -- sleep 2
+gum spin --spinner dot --title "Gathering system info..." --spinner.foreground="82" -- sleep 1
 
 SYSTEM_ARCH=$(uname -m)
-JETSON_PYTHON_VERSION=$(python3 --version | awk '{print $2}')
+if command -v python3 &> /dev/null; then
+    JETSON_PYTHON_VERSION=$(python3 --version | awk '{print $2}')
+else
+    JETSON_PYTHON_VERSION="Not Found"
+fi
 
-gum style --foreground 82 --bold "System Architecture: $SYSTEM_ARCH"
-gum style --foreground 82 --bold "Python Version: $JETSON_PYTHON_VERSION"
+gum style --foreground 82 --bold "Architecture: $SYSTEM_ARCH"
+gum style --foreground 82 --bold "Python: $JETSON_PYTHON_VERSION"
 
-CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the menu (use <space> to select):" \
+CHOICES=$(gum choose --no-limit --header "Select components to install (Space to select, Enter to confirm):" \
     "OpenCV with CUDA enabled" \
     "MiniConda" \
     "PyTorch with CUDA acceleration" \
@@ -29,27 +57,30 @@ CHOICES=$(gum choose --no-limit --header "Multiple Selection - Select from the m
     --header.foreground="82" \
     --selected.foreground="82" \
     --cursor.foreground="82")
+
 if echo "$CHOICES" | grep -q "OpenCV with CUDA enabled"; then
-    bash src/modules/install_opencv.sh
+    sudo bash "$MODULES_DIR/install_opencv.sh"
 fi
 if echo "$CHOICES" | grep -q "MiniConda"; then
-    bash src/modules/install_miniconda.sh
+    sudo bash "$MODULES_DIR/install_miniconda.sh"
 fi
 if echo "$CHOICES" | grep -q "PyTorch with CUDA acceleration"; then
-    bash src/modules/install_torch.sh
+    sudo bash "$MODULES_DIR/install_torch.sh"
 fi
 if echo "$CHOICES" | grep -q "VS Code"; then
-    bash src/modules/install_vscode.sh
+    sudo bash "$MODULES_DIR/install_vscode.sh"
 fi
 if echo "$CHOICES" | grep -q "uv"; then
-    bash src/modules/install_uv.sh
+    sudo bash "$MODULES_DIR/install_uv.sh"
 fi
 if echo "$CHOICES" | grep -q "TensorRT"; then
-    bash src/modules/link_tensorrt.sh
+    sudo bash "$MODULES_DIR/link_tensorrt.sh"
 fi
 if echo "$CHOICES" | grep -q "jtop"; then
-    bash src/modules/install_jtop.sh
+    sudo bash "$MODULES_DIR/install_jtop.sh"
 fi
 if echo "$CHOICES" | grep -q "Brave Browser"; then
-    bash src/modules/install_brave_browser.sh
+    if [ -f "$MODULES_DIR/install_brave_browser.sh" ]; then
+        sudo bash "$MODULES_DIR/install_brave_browser.sh"
+    fi
 fi
