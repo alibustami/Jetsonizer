@@ -6,6 +6,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONDA_VARIANTS_FILE="$SRC_ROOT/resources/conda_variants.txt"
 
+if [ "${EUID:-$(id -u)}" -eq 0 ] && [ -n "${SUDO_USER:-}" ]; then
+    gum style --foreground 196 --bold "❌ Run Miniconda installation without sudo so it installs to your user home."
+    exit 1
+fi
+
 if [ ! -f "$CONDA_VARIANTS_FILE" ]; then
     echo "❌ Miniconda variants list not found at $CONDA_VARIANTS_FILE." >&2
     exit 1
@@ -15,7 +20,6 @@ declare -A VARIANT_FILES
 REQUIRED_VERSIONS=("latest" "3.13" "3.12" "3.11" "3.10" "3.9" "3.8" "3.7")
 
 while IFS= read -r variant || [ -n "$variant" ]; do
-    # Skip comments or empty lines in the variants list
     variant="${variant%$'\r'}"
     if [ -z "$variant" ] || [[ "$variant" =~ ^# ]]; then
         continue
@@ -92,8 +96,6 @@ hash -r 2>/dev/null || true
 if [ -x "$CONDA_BIN" ]; then
     gum style --foreground 82 --bold "✅ Miniconda ($SELECTED_VERSION) installed successfully!"
     gum style --foreground 82 --bold "To activate, run: source \"$INSTALL_DIR/bin/activate\""
-    # Initialize conda for all supported shells after installation
-    # shellcheck disable=SC1091
     source "$INSTALL_DIR/bin/activate"
     conda init --all
 else
