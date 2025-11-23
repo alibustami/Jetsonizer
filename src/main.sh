@@ -62,7 +62,7 @@ if echo "$CHOICES" | grep -q "OpenCV with CUDA enabled"; then
     sudo bash "$MODULES_DIR/install_opencv.sh"
 fi
 if echo "$CHOICES" | grep -q "MiniConda"; then
-    sudo bash "$MODULES_DIR/install_miniconda.sh"
+    bash "$MODULES_DIR/install_miniconda.sh"
 fi
 if echo "$CHOICES" | grep -q "PyTorch with CUDA acceleration"; then
     sudo bash "$MODULES_DIR/install_torch.sh"
