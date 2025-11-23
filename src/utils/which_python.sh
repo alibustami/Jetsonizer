@@ -35,12 +35,20 @@ try_candidate() {
 
 resolve_from_owner_env() {
     local owner var value
-    for var in JETSONIZER_ACTIVE_PYTHON_BIN JETSONIZER_PREFERRED_PYTHON_BIN; do
-        value="${!var:-}"
-        if try_candidate "$value"; then
-            return 0
-        fi
-    done
+    local skip_presets=0
+
+    if [ -n "${JETSONIZER_FORCE_REDETECT:-}" ]; then
+        skip_presets=1
+    fi
+
+    if [ "$skip_presets" -eq 0 ]; then
+        for var in JETSONIZER_ACTIVE_PYTHON_BIN JETSONIZER_PREFERRED_PYTHON_BIN; do
+            value="${!var:-}"
+            if try_candidate "$value"; then
+                return 0
+            fi
+        done
+    fi
 
     if [ -n "${VIRTUAL_ENV:-}" ]; then
         if try_candidate "$VIRTUAL_ENV/bin/python"; then
