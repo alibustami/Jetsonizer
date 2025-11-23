@@ -8,6 +8,7 @@ REPO_ROOT="$(cd "$SRC_ROOT/.." && pwd)"
 CHECK_PIP_SCRIPT="$SRC_ROOT/utils/check_pip.sh"
 CUDA_NPP_SCRIPT="$SRC_ROOT/utils/ensure_cuda_npp.sh"
 OPENCV_CUDA_TEST_SCRIPT="$SRC_ROOT/tests/test_opencv_cuda.sh"
+WHICH_PYTHON_SCRIPT="$SRC_ROOT/utils/which_python.sh"
 
 WHEEL_URL="https://pypi.jetson-ai-lab.io/sbsa/cu130/+f/6e7/7b9ad7aeba994/opencv_contrib_python_rolling-4.13.0-cp312-cp312-linux_aarch64.whl"
 WHEEL_SHA256="6e77b9ad7aeba994db0b443c047a4729c379a21617f64497c0d22f992d9b7be2"
@@ -36,28 +37,34 @@ export PIP_ROOT_USER_ACTION=ignore
 
 gum style --foreground 82 --bold "Installing OpenCV with CUDA-enabled wheel for Jetson..."
 
-select_python_bin() {
-    if command -v python &> /dev/null; then
-        echo "python"
-        return 0
-    fi
-    
-    if command -v python3.12 &> /dev/null; then
-        echo "python3.12"
-        return 0
-    fi
-
-    if command -v python3 &> /dev/null; then
-        echo "python3"
-        return 0
-    fi
-
-    return 1
-}
-
-PYTHON_BIN=$(select_python_bin) || {
-    gum style --foreground 196 --bold "❌ No Python interpreter was found in PATH."
+if [ ! -x "$WHICH_PYTHON_SCRIPT" ]; then
+    gum style --foreground 196 --bold "❌ Missing Python detector helper at $WHICH_PYTHON_SCRIPT."
     exit 1
+fi
+
+if ! PYTHON_BIN="$("$WHICH_PYTHON_SCRIPT")"; then
+    gum style --foreground 196 --bold "❌ Unable to determine the active Python interpreter."
+    exit 1
+fi
+gum style --foreground 82 --bold "Using Python interpreter: $PYTHON_BIN"
+
+python_looks_like_env() {
+    local interpreter="${1:-}"
+    if [ -z "$interpreter" ]; then
+        return 1
+    fi
+
+    if [ -n "${VIRTUAL_ENV:-}" ] || [ -n "${CONDA_PREFIX:-}" ] || [ -n "${PYENV_VERSION:-}" ] || [ -n "${UV_PROJECT_ENVIRONMENT:-}" ] || [ -n "${UV_ACTIVE:-}" ] || { [ -n "${JETSONIZER_ACTIVE_PYTHON_BIN:-}" ] && [ "$JETSONIZER_ACTIVE_PYTHON_BIN" = "$interpreter" ]; }; then
+        return 0
+    fi
+
+    case "$interpreter" in
+        /usr/bin/*|/usr/local/bin/*|/bin/*|/sbin/*)
+            return 1
+            ;;
+    esac
+
+    return 0
 }
 
 PYTHON_VERSION=$("$PYTHON_BIN" -c 'import sys; print(f"{sys.version_info[0]}.{sys.version_info[1]}")')
@@ -98,7 +105,7 @@ if compgen -G "$USER_LOCAL_LIB/libnpp*.so.13" > /dev/null 2>&1; then
     export LD_LIBRARY_PATH="$USER_LOCAL_LIB:${LD_LIBRARY_PATH:-}"
 fi
 
-if [ -n "${VIRTUAL_ENV:-}" ]; then
+if python_looks_like_env "$PYTHON_BIN"; then
     PIP_INSTALL_FLAGS=()
 else
     SUPPORTS_BREAK_FLAG=0

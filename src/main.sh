@@ -3,6 +3,7 @@
 BASE_DIR="$(dirname "$(realpath "$0")")"
 MODULES_DIR="$BASE_DIR/modules"
 UTILS_DIR="$BASE_DIR/utils"
+WHICH_PYTHON_SCRIPT="$UTILS_DIR/which_python.sh"
 
 function show_help() {
     echo "Jetsonizer - The Ultimate NVIDIA Jetson Setup Tool"
@@ -36,14 +37,36 @@ gum style \
 gum spin --spinner dot --title "Gathering system info..." --spinner.foreground="82" -- sleep 1
 
 SYSTEM_ARCH=$(uname -m)
-if command -v python3 &> /dev/null; then
-    JETSON_PYTHON_VERSION=$(python3 --version | awk '{print $2}')
+JETSONIZER_ACTIVE_PYTHON_BIN=""
+JETSON_PYTHON_VERSION=""
+
+if [ -x "$WHICH_PYTHON_SCRIPT" ]; then
+    if JETSONIZER_ACTIVE_PYTHON_BIN="$("$WHICH_PYTHON_SCRIPT")"; then
+        export JETSONIZER_ACTIVE_PYTHON_BIN
+        if PYTHON_VERSION_OUTPUT=$("$JETSONIZER_ACTIVE_PYTHON_BIN" --version 2>&1 | head -n 1); then
+            JETSON_PYTHON_VERSION=$(echo "$PYTHON_VERSION_OUTPUT" | awk '{print $2}')
+        fi
+    else
+        gum style --foreground 196 --bold "❌ Unable to determine the active Python interpreter. Python-based installs will fail until this is resolved."
+    fi
 else
-    JETSON_PYTHON_VERSION="Not Found"
+    gum style --foreground 214 --bold "⚠️  Python detector helper missing at $WHICH_PYTHON_SCRIPT."
+fi
+
+if [ -z "$JETSON_PYTHON_VERSION" ]; then
+    if command -v python3 &> /dev/null; then
+        JETSON_PYTHON_VERSION=$(python3 --version | awk '{print $2}')
+    else
+        JETSON_PYTHON_VERSION="Not Found"
+    fi
 fi
 
 gum style --foreground 82 --bold "Architecture: $SYSTEM_ARCH"
-gum style --foreground 82 --bold "Python: $JETSON_PYTHON_VERSION"
+if [ -n "$JETSONIZER_ACTIVE_PYTHON_BIN" ]; then
+    gum style --foreground 82 --bold "Python: $JETSON_PYTHON_VERSION ($JETSONIZER_ACTIVE_PYTHON_BIN)"
+else
+    gum style --foreground 214 --bold "Python: $JETSON_PYTHON_VERSION"
+fi
 
 CHOICES=$(gum choose --no-limit --header "Select components to install (Space to select, Enter to confirm):" \
     "OpenCV with CUDA enabled" \
@@ -54,18 +77,18 @@ CHOICES=$(gum choose --no-limit --header "Select components to install (Space to
     "TensorRT" \
     "jtop" \
     "Brave Browser" \
-    --header.foreground="82" \
-    --selected.foreground="82" \
-    --cursor.foreground="82")
+--header.foreground="82" \
+--selected.foreground="82" \
+--cursor.foreground="82")
 
 if echo "$CHOICES" | grep -q "OpenCV with CUDA enabled"; then
-    sudo bash "$MODULES_DIR/install_opencv.sh"
+    sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/install_opencv.sh"
 fi
 if echo "$CHOICES" | grep -q "MiniConda"; then
     bash "$MODULES_DIR/install_miniconda.sh"
 fi
 if echo "$CHOICES" | grep -q "PyTorch with CUDA acceleration"; then
-    sudo bash "$MODULES_DIR/install_torch.sh"
+    sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/install_torch.sh"
 fi
 if echo "$CHOICES" | grep -q "VS Code"; then
     sudo bash "$MODULES_DIR/install_vscode.sh"
@@ -74,7 +97,7 @@ if echo "$CHOICES" | grep -q "uv"; then
     sudo bash "$MODULES_DIR/install_uv.sh"
 fi
 if echo "$CHOICES" | grep -q "TensorRT"; then
-    sudo bash "$MODULES_DIR/link_tensorrt.sh"
+    sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/link_tensorrt.sh"
 fi
 if echo "$CHOICES" | grep -q "jtop"; then
     sudo bash "$MODULES_DIR/install_jtop.sh"

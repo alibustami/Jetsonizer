@@ -12,6 +12,7 @@ SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SRC_ROOT/.." && pwd)"
 CHECK_PIP_SCRIPT="$SRC_ROOT/utils/check_pip.sh"
 TENSORRT_TEST_SCRIPT="$SRC_ROOT/tests/test_tensorrt.py"
+WHICH_PYTHON_SCRIPT="$SRC_ROOT/utils/which_python.sh"
 DEFAULT_INSTALL_ROOT="$HOME/tensorrt"
 REQUIRED_SUBDIRS=(bin doc include lib python targets)
 TENSORRT_PIP_OPTIONS=(tensorrt tensorrt_dispatch tensorrt_lean)
@@ -233,6 +234,42 @@ determine_top_level_dir() {
     printf '%s\n' "$top"
 }
 
+detect_python_bin() {
+    local candidate=""
+    if [ -n "${JETSONIZER_ACTIVE_PYTHON_BIN:-}" ] && [ -x "${JETSONIZER_ACTIVE_PYTHON_BIN}" ]; then
+        printf '%s\n' "$(canonicalize_path "$JETSONIZER_ACTIVE_PYTHON_BIN")"
+        return 0
+    fi
+
+    if [ -x "$WHICH_PYTHON_SCRIPT" ]; then
+        if candidate="$("$WHICH_PYTHON_SCRIPT")"; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    fi
+
+    return 1
+}
+
+python_looks_like_env() {
+    local interpreter="${1:-}"
+    if [ -z "$interpreter" ]; then
+        return 1
+    fi
+
+    if [ -n "${VIRTUAL_ENV:-}" ] || [ -n "${CONDA_PREFIX:-}" ] || [ -n "${PYENV_VERSION:-}" ] || [ -n "${UV_PROJECT_ENVIRONMENT:-}" ] || [ -n "${UV_ACTIVE:-}" ] || { [ -n "${JETSONIZER_ACTIVE_PYTHON_BIN:-}" ] && [ "$JETSONIZER_ACTIVE_PYTHON_BIN" = "$interpreter" ]; }; then
+        return 0
+    fi
+
+    case "$interpreter" in
+        /usr/bin/*|/usr/local/bin/*|/bin/*|/sbin/*)
+            return 1
+            ;;
+    esac
+
+    return 0
+}
+
 select_python_interpreter() {
     local options=()
     declare -A OPTION_TO_BIN=()
@@ -443,11 +480,18 @@ gum style --foreground 82 --bold "LD_LIBRARY_PATH updated for this session."
 
 ensure_profile_exports "$LIB_DIR_ABS"
 
-if ! select_python_interpreter; then
-    gum style --foreground 214 --bold "⚠️  TensorRT linking cancelled before pip installation."
-    exit 0
+PYTHON_BIN=""
+if PYTHON_BIN=$(detect_python_bin); then
+    gum style --foreground 82 --bold "Using Python interpreter: $PYTHON_BIN"
+else
+    gum style --foreground 214 --bold "⚠️  Unable to auto-detect an active Python interpreter."
+    gum style --foreground 82 --bold "Please select the interpreter to use for TensorRT."
+    if ! select_python_interpreter; then
+        gum style --foreground 214 --bold "⚠️  TensorRT linking cancelled before pip installation."
+        exit 0
+    fi
+    gum style --foreground 82 --bold "Using Python interpreter: $PYTHON_BIN"
 fi
-gum style --foreground 82 --bold "Using Python interpreter: $PYTHON_BIN"
 
 if [ -x "$CHECK_PIP_SCRIPT" ]; then
     bash "$CHECK_PIP_SCRIPT" "$PYTHON_BIN"
@@ -488,9 +532,28 @@ INSTALL_LOG="$(mktemp -t tensorrt-pip-XXXXXX.log)"
 trap 'rm -f "$INSTALL_LOG"' EXIT
 gum style --foreground 82 --bold "Installing TensorRT Python packages into $PYTHON_BIN..."
 gum style --foreground 82 "Install targets: ${INSTALL_TARGETS[*]}"
+
+PIP_INSTALL_FLAGS=(--upgrade)
+if python_looks_like_env "$PYTHON_BIN"; then
+    :
+else
+    SUPPORTS_BREAK_FLAG=0
+    if "$PYTHON_BIN" -m pip install --help 2>/dev/null | grep -q -- '--break-system-packages'; then
+        SUPPORTS_BREAK_FLAG=1
+    fi
+
+    if [ "$SUPPORTS_BREAK_FLAG" -eq 1 ]; then
+        PIP_INSTALL_FLAGS+=(--break-system-packages)
+    elif [ "$(id -u)" -ne 0 ]; then
+        PIP_INSTALL_FLAGS+=(--user)
+    else
+        gum style --foreground 214 --bold "⚠️  pip does not support --break-system-packages; installing system-wide as root."
+    fi
+fi
+
 set +e
 gum spin --spinner dot --title "pip install: ${INSTALL_TARGETS[*]}" --spinner.foreground="82" -- \
-    "$PYTHON_BIN" -m pip install --upgrade --break-system-packages "${INSTALL_TARGETS[@]}" >"$INSTALL_LOG" 2>&1
+    "$PYTHON_BIN" -m pip install "${PIP_INSTALL_FLAGS[@]}" "${INSTALL_TARGETS[@]}" >"$INSTALL_LOG" 2>&1
 PIP_STATUS=$?
 set -e
 
