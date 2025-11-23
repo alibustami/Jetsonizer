@@ -1,8 +1,0 @@
-Miniconda3-latest-Linux-aarch64.sh
-Miniconda3-py39_25.9.1-1-Linux-aarch64.sh
-Miniconda3-py313_25.9.1-1-Linux-aarch64.sh
-Miniconda3-py312_25.9.1-1-Linux-aarch64.sh
-Miniconda3-py311_25.9.1-1-Linux-aarch64.sh
-Miniconda3-py310_25.9.1-1-Linux-aarch64.sh
-Miniconda3-py38_23.11.0-2-Linux-aarch64.sh
-Miniconda3-py37_23.1.0-1-Linux-aarch64.sh
