@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -Eeuo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -13,10 +13,35 @@ WHEEL_URL="https://pypi.jetson-ai-lab.io/sbsa/cu130/+f/6e7/7b9ad7aeba994/opencv_
 WHEEL_SHA256="6e77b9ad7aeba994db0b443c047a4729c379a21617f64497c0d22f992d9b7be2"
 WHEEL_FILENAME="opencv_contrib_python_rolling-4.13.0-cp312-cp312-linux_aarch64.whl"
 EXPECTED_PYTHON_MM="3.12"
+LOG_DIR="${JETSONIZER_LOG_DIR:-$HOME/.cache/jetsonizer}"
+PIP_LOG="$LOG_DIR/opencv_pip_install.log"
+
+mkdir -p "$LOG_DIR"
+
+handle_err() {
+    local exit_code=$?
+    set +e
+    gum style --foreground 196 --bold "❌ OpenCV install failed (line ${BASH_LINENO[0]}): ${BASH_COMMAND}"
+    gum style --foreground 214 --bold "See $PIP_LOG for pip output if the failure happened during installation."
+    exit "$exit_code"
+}
+
+trap 'handle_err' ERR
+
+export PIP_NO_INPUT=1
+export PIP_DISABLE_PIP_VERSION_CHECK=1
+export PIP_DEFAULT_TIMEOUT="${PIP_DEFAULT_TIMEOUT:-60}"
+export PIP_BREAK_SYSTEM_PACKAGES=1
+export PIP_ROOT_USER_ACTION=ignore
 
 gum style --foreground 82 --bold "Installing OpenCV with CUDA-enabled wheel for Jetson..."
 
 select_python_bin() {
+    if command -v python &> /dev/null; then
+        echo "python"
+        return 0
+    fi
+    
     if command -v python3.12 &> /dev/null; then
         echo "python3.12"
         return 0
@@ -31,7 +56,7 @@ select_python_bin() {
 }
 
 PYTHON_BIN=$(select_python_bin) || {
-    gum style --foreground 196 --bold "❌ Neither python3.12 nor python3 was found in PATH."
+    gum style --foreground 196 --bold "❌ No Python interpreter was found in PATH."
     exit 1
 }
 
@@ -73,8 +98,30 @@ if compgen -G "$USER_LOCAL_LIB/libnpp*.so.13" > /dev/null 2>&1; then
     export LD_LIBRARY_PATH="$USER_LOCAL_LIB:${LD_LIBRARY_PATH:-}"
 fi
 
+if [ -n "${VIRTUAL_ENV:-}" ]; then
+    PIP_INSTALL_FLAGS=()
+else
+    SUPPORTS_BREAK_FLAG=0
+    if "$PYTHON_BIN" -m pip install --help 2>/dev/null | grep -q -- '--break-system-packages'; then
+        SUPPORTS_BREAK_FLAG=1
+    fi
+
+    if [ "$SUPPORTS_BREAK_FLAG" -eq 1 ]; then
+        PIP_INSTALL_FLAGS=(--break-system-packages)
+    elif [ "$(id -u)" -eq 0 ]; then
+        gum style --foreground 214 --bold "⚠️  pip does not support --break-system-packages; installing system-wide because this module is running as root."
+        PIP_INSTALL_FLAGS=()
+    else
+        PIP_INSTALL_FLAGS=(--user)
+    fi
+fi
+
 gum spin --spinner dot --title "Upgrading pip for $PYTHON_BIN..." --spinner.foreground="82" -- \
-    "$PYTHON_BIN" -m pip install --upgrade pip >/dev/null
+    "$PYTHON_BIN" -m pip install --upgrade "${PIP_INSTALL_FLAGS[@]}" pip 2>/dev/null || {
+    gum style --foreground 214 --bold "⚠️  Skipping pip self-upgrade (system-managed pip)."
+    gum style --foreground 82 --bold "Using existing pip: $("$PYTHON_BIN" -m pip --version)"
+}
+
 
 ensure_downloader() {
     if command -v wget &> /dev/null; then
@@ -120,12 +167,19 @@ if command -v sha256sum &> /dev/null; then
         gum style --foreground 196 --bold "❌ Checksum mismatch. Expected $WHEEL_SHA256 but got $DOWNLOADED_SHA."
         exit 1
     fi
+    gum style --foreground 82 --bold "✅ Checksum verified."
 else
     gum style --foreground 214 --bold "⚠️  sha256sum not available. Skipping checksum verification."
 fi
 
-gum spin --spinner dot --title "Installing OpenCV wheel..." --spinner.foreground="82" -- \
-    "$PYTHON_BIN" -m pip install --break-system-packages --force-reinstall "$WHEEL_PATH"
+PIP_WHEEL_FLAGS=(--ignore-installed)
+
+gum style --foreground 82 --bold "Installing OpenCV wheel (logging to $PIP_LOG)..."
+if ! "$PYTHON_BIN" -m pip install "${PIP_INSTALL_FLAGS[@]}" "${PIP_WHEEL_FLAGS[@]}" --force-reinstall "$WHEEL_PATH" 2>&1 | tee "$PIP_LOG"; then
+    gum style --foreground 196 --bold "❌ pip install failed. See $PIP_LOG for details."
+    exit 1
+fi
+gum style --foreground 82 --bold "✅ pip install completed."
 
 if INSTALLED_VERSION=$("$PYTHON_BIN" - <<'PY'
 import cv2
