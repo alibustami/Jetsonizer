@@ -161,6 +161,18 @@ function render_items() {
     done
 }
 
+function render_selection_summary() {
+    if [[ ${#SELECTION_ORDER[@]} -eq 0 ]]; then
+        gum style --foreground 244 "Selected: none"
+        return
+    fi
+
+    gum style --foreground 82 --bold "Selected (${#SELECTION_ORDER[@]}):"
+    for name in "${SELECTION_ORDER[@]}"; do
+        gum style --foreground 82 "  - $name"
+    done
+}
+
 function remove_from_selection_order() {
     local name=$1
     local updated=()
@@ -207,6 +219,9 @@ function run_selection_menu() {
             fi
             render_items "$current_category" "$current_item_index"
         fi
+
+        printf "\n"
+        render_selection_summary
 
         IFS= read -rsn1 key
         if [[ -z "$key" ]]; then
