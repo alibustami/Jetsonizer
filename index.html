@@ -1,1 +1,268 @@
-<h1>Jetsonizer Apt Repository</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Jetsonizer: Smoother and Faster NVIDIA Jetson Setup.">
+  <meta name="keywords" content="NVIDIA Jetson, Setup, Automation, CLI, Jetsonizer, Robotics, Edge AI">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jetsonizer: Smoother and Faster NVIDIA Jetson Setup</title>
+
+  <!-- Google Fonts & 3rd‑party styles -->
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <!-- Ensure images keep their natural aspect ratio -->
+  <style>
+    figure.image {
+      margin: 1rem 0;
+    }
+    figure.image img {
+      width: auto;
+      height: 100%;
+    }
+    .code-block {
+        text-align: left;
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-radius: 4px;
+        font-family: monospace;
+        overflow-x: auto;
+    }
+    .nvidia-card {
+      background-color: #76B900;
+      color: white;
+      height: 100%;
+    }
+    .nvidia-card .title {
+      color: white;
+    }
+    .nvidia-card strong {
+        color: white;
+    }
+  </style>
+
+  <!-- JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<!-- ╔═══════════╗ -->
+<!-- ║NAVIGATION ║ -->
+<!-- ╚═══════════╝ -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenu">
+      <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu" id="navMenu">
+    <div class="navbar-start">
+      <!-- Add navigation links here if needed -->
+    </div>
+  </div>
+</nav>
+
+<!-- ╔═══════════════════╗ -->
+<!-- ║ TITLE & AUTHORSHIP ║ -->
+<!-- ╚═══════════════════╝ -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            <span style="color: #76B900; font-size: 1.5em; display: block; margin-bottom: 0.5rem;">Jetsonizer</span>
+            <span class="is-size-3">Smoother and Faster NVIDIA Jetson Setup</span>
+          </h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://alibustami.github.io/">Ali Al-Bustami</a> & 
+            </span>
+            <span class="author-block">
+              <a href="https://zaidghazal.github.io/">Zaid Ghazal</a>
+            </span>
+          </div>
+          <!-- <div class="is-size-5 publication-authors"><span class="author-block">University of Michigan–Dearborn</span></div> -->
+
+          <div class="column has-text-centered pt-4">
+            <div class="publication-links">
+              <!-- GitHub Link -->
+              <span class="link-block">
+                <a href="https://github.com/alibustami/Jetsonizer" target="_blank" class="external-link button is-normal is-rounded is-dark" rel="noopener">
+                  <span class="icon"><i class="fab fa-github"></i></span><span>GitHub</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔═════════════════════════════════╗ -->
+<!-- ║ ABSTRACT / INTRO & INSTALL GIF ║ -->
+<!-- ╚═════════════════════════════════╝ -->
+<section class="section" style="padding-top: 0; padding-bottom: 0;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">About Jetsonizer</h2>
+        <div class="content has-text-justified">
+          <p>
+            <strong>Jetsonizer</strong> is a powerful CLI tool designed to streamline and automate the setup process for NVIDIA Jetson devices. 
+            Setting up a fresh Jetson environment can be tedious and prone to errors. Jetsonizer simplifies this by handling user creation, 
+            hostname configuration, SSH security, and essential package installations in a single, interactive workflow.
+          </p>
+        </div>
+
+        <!-- Supported Tools (Moved here) -->
+        <h2 class="title is-3 has-text-centered mt-6">Supported Tools</h2>
+        <div class="content">
+          <!-- Row 1 -->
+          <div class="columns">
+            <!-- ML & Vision stack -->
+            <div class="column">
+              <div class="card nvidia-card">
+                <div class="card-content">
+                  <p class="title is-4"><i class="fas fa-brain"></i> ML & Vision Stack</p>
+                  <ul class="is-size-5">
+                    <li>OpenCV (CUDA)</li>
+                    <li>PyTorch (CUDA)</li>
+                    <li>TensorRT</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Python env & tooling -->
+            <div class="column">
+              <div class="card nvidia-card">
+                <div class="card-content">
+                  <p class="title is-4"><i class="fas fa-tools"></i> Python Env & Tooling</p>
+                  <ul class="is-size-5">
+                    <li>MiniConda</li>
+                    <li>uv</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+
+          <!-- Row 2 -->
+          <div class="columns is-centered">
+            <!-- Monitoring -->
+            <div class="column is-one-third">
+              <div class="card nvidia-card">
+                <div class="card-content">
+                  <p class="title is-4"><i class="fas fa-chart-line"></i> Monitoring</p>
+                  <ul class="is-size-5">
+                    <li>jtop</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Browsers -->
+            <div class="column is-one-third">
+              <div class="card nvidia-card">
+                <div class="card-content">
+                  <p class="title is-4"><i class="fas fa-globe"></i> Browsers</p>
+                  <ul class="is-size-5">
+                    <li>Brave Browser</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- IDEs (Moved here) -->
+            <div class="column is-one-third">
+              <div class="card nvidia-card">
+                <div class="card-content">
+                  <p class="title is-4"><i class="fas fa-code"></i> IDEs</p>
+                  <ul class="is-size-5">
+                    <li>VS Code</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <h2 class="title is-3 has-text-centered mt-6">See it in Action</h2>
+        
+        <figure class="image is-centered">
+            <img src="./assets/install.gif" alt="Jetsonizer Installation Demo">
+            <figcaption>Jetsonizer in action: Automating the setup process.</figcaption>
+        </figure>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔══════════════════╗ -->
+<!-- ║ INSTALLATION ║ -->
+<!-- ╚══════════════════╝ -->
+<section class="section" style="padding-top: 1rem;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Installation</h2>
+        <div class="content">
+          <p>Get started with Jetsonizer by running the following commands on your NVIDIA Jetson device:</p>
+          
+          <p><strong>1. Add the repository:</strong></p>
+          <div class="code-block">
+            echo "deb [trusted=yes] https://alibustami.github.io/Jetsonizer/ debian/" | sudo tee /etc/apt/sources.list.d/jetsonizer.list
+          </div>
+
+          <p><strong>2. Update and install:</strong></p>
+          <div class="code-block">
+            sudo apt update<br>
+            sudo apt install jetsonizer
+          </div>
+
+          <p><strong>3. Run Jetsonizer:</strong></p>
+          <div class="code-block">
+            jetsonizer
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ╔════════════╗ -->
+<!-- ║ FOOTER ║ -->
+<!-- ╚════════════╝ -->
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <p>
+        <strong>Jetsonizer</strong> by <a href="https://alibustami.github.io/">Ali Al-Bustami</a> and <a href="https://zaidghazal.github.io/">Zaid Ghazal</a>.
+      </p>
+      <p>
+        <a href="https://github.com/alibustami/Jetsonizer" class="icon">
+          <i class="fab fa-github"></i>
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
