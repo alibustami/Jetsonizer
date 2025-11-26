@@ -87,7 +87,7 @@ For more details, visit the [project website](https://alibustami.github.io/Jetso
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a PR.
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.MD) before submitting a PR.
 
 ## 👥 Authors
 
