@@ -11,7 +11,7 @@
 
 ---
 
-**Jetsonizer** is a powerful CLI tool designed to streamline and automate the setup process for NVIDIA Jetson devices. Setting up a fresh Jetson environment can be tedious and prone to errors—Jetsonizer simplifies this by handling user creation, hostname configuration, SSH security, and essential package installations in a single, interactive workflow.
+**Jetsonizer** is a CLI tool designed to streamline and automate the setup process for NVIDIA Jetson devices. Setting up a fresh Jetson environment can be tedious and prone to errors. Jetsonizer simplifies this by handling user creation and essential package installations in a single, interactive workflow.
 
 [Installation](#-installation) •
 [Features](#-features) •
