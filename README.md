@@ -15,8 +15,8 @@
 
 [Installation](#-installation) •
 [Features](#-features) •
-[Supported Tools](#-supported-tools) •
-[Usage](#-usage) •
+[Supported Tools](#️-currently-supported-tools) •
+[Usage](#usage) •
 [Contributing](#-contributing)
 
 </div>
