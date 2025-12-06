@@ -92,6 +92,7 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 ## 👥 Authors
 
 - **[Ali Al-Bustami](https://alibustami.github.io/)**
+- **[Humberto Ruiz-Ochoa](https://www.linkedin.com/in/humberto-ruiz-ochoa/)**
 - **[Zaid Ghazal](https://zaidghazal.github.io/)**
 
 ## 📄 License
