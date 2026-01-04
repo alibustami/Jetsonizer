@@ -286,13 +286,13 @@ gum style --foreground 82 --bold "Installing: ${SELECTION_ORDER[*]}"
 for ITEM in "${SELECTION_ORDER[@]}"; do
     case "$ITEM" in
         "OpenCV with CUDA enabled")
-            sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/install_opencv.sh"
+            sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/router_opencv.sh"
             ;;
         "MiniConda")
             bash "$MODULES_DIR/install_miniconda.sh"
             ;;
         "PyTorch with CUDA acceleration")
-            sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/install_torch.sh"
+            sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/router_torch.sh"
             ;;
         "VS Code")
             sudo bash "$MODULES_DIR/install_vscode.sh"
