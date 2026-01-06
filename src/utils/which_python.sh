@@ -10,13 +10,17 @@ log_error() {
 
 normalize_path() {
     local candidate="$1"
-    if command -v realpath >/dev/null 2>&1; then
-        realpath "$candidate" 2>/dev/null || echo "$candidate"
-    elif command -v readlink >/dev/null 2>&1; then
-        readlink -f "$candidate" 2>/dev/null || echo "$candidate"
-    else
-        echo "$candidate"
+    local resolved=""
+
+    # Preserve symlink paths so venv interpreters don't collapse to /usr/bin.
+    if [[ "$candidate" != /* ]]; then
+        resolved="$(type -P "$candidate" 2>/dev/null || true)"
+        if [ -n "$resolved" ]; then
+            candidate="$resolved"
+        fi
     fi
+
+    printf '%s\n' "$candidate"
 }
 
 is_executable_python() {

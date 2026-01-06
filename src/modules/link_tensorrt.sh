@@ -237,7 +237,8 @@ determine_top_level_dir() {
 detect_python_bin() {
     local candidate=""
     if [ -n "${JETSONIZER_ACTIVE_PYTHON_BIN:-}" ] && [ -x "${JETSONIZER_ACTIVE_PYTHON_BIN}" ]; then
-        printf '%s\n' "$(canonicalize_path "$JETSONIZER_ACTIVE_PYTHON_BIN")"
+        # Keep the active interpreter path intact to respect venv/conda shims.
+        printf '%s\n' "$JETSONIZER_ACTIVE_PYTHON_BIN"
         return 0
     fi
 
