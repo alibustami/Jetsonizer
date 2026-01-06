@@ -304,7 +304,7 @@ for ITEM in "${SELECTION_ORDER[@]}"; do
             sudo env "JETSONIZER_ACTIVE_PYTHON_BIN=${JETSONIZER_ACTIVE_PYTHON_BIN:-}" bash "$MODULES_DIR/link_tensorrt.sh"
             ;;
         "jtop")
-            sudo bash "$MODULES_DIR/install_jtop.sh"
+            sudo bash "$MODULES_DIR/router_jtop.sh"
             ;;
         "Brave Browser")
             if [ -f "$MODULES_DIR/install_brave_browser.sh" ]; then
