@@ -129,7 +129,7 @@ if gum confirm "Install/ensure build dependencies via apt (build-essential/cmake
   gum spin --spinner dot --title "Installing packages..." --spinner.foreground="82" -- \
     sudo apt-get install -y \
       build-essential cmake git pkg-config ninja-build \
-      python3-dev python3-numpy \
+      python3-dev \
       libjpeg-dev libpng-dev libtiff-dev \
       libavcodec-dev libavformat-dev libswscale-dev \
       libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
