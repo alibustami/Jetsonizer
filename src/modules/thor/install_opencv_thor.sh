@@ -21,7 +21,7 @@ if [ -f "$LOGGER_SCRIPT" ]; then
     jetsonizer_log_init
 fi
 
-LOG_DIR="${JETSONIZER_LOG_DIR:-/home/.cache/Jetsonizer}"
+LOG_DIR="${JETSONIZER_LOG_DIR:-/home/${SUDO_USER:-${USER:-$(id -un 2>/dev/null || echo root)}}/.cache/Jetsonizer}"
 PIP_LOG="$LOG_DIR/opencv_pip_install.log"
 
 mkdir -p "$LOG_DIR"
@@ -142,13 +142,13 @@ gum spin --spinner dot --title "Upgrading pip for $PYTHON_BIN..." --spinner.fore
 
 
 ensure_downloader() {
-    if command -v wget &> /dev/null; then
-        echo "wget"
+    if command -v curl &> /dev/null; then
+        echo "curl"
         return 0
     fi
 
-    if command -v curl &> /dev/null; then
-        echo "curl"
+    if command -v wget &> /dev/null; then
+        echo "wget"
         return 0
     fi
 
@@ -171,7 +171,7 @@ WHEEL_PATH="$DOWNLOAD_DIR/$WHEEL_FILENAME"
 gum style --foreground 82 --bold "Downloading OpenCV wheel from Jetson AI Lab..."
 if [ "$DOWNLOADER" = "wget" ]; then
     gum spin --spinner dot --title "Downloading wheel..." --spinner.foreground="82" -- \
-        wget -q "$WHEEL_URL" -O "$WHEEL_PATH"
+        wget -q --user-agent="Mozilla/5.0 (Jetsonizer)" "$WHEEL_URL" -O "$WHEEL_PATH"
 else
     gum spin --spinner dot --title "Downloading wheel..." --spinner.foreground="82" -- \
         curl -Ls "$WHEEL_URL" -o "$WHEEL_PATH"

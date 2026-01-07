@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JETSONIZER_LOG_DIR_DEFAULT="/home/.cache/Jetsonizer"
+JETSONIZER_LOG_DIR_DEFAULT="/home/${SUDO_USER:-${USER:-$(id -un 2>/dev/null || echo root)}}/.cache/Jetsonizer"
 
 jetsonizer_log_init() {
     local caller="${BASH_SOURCE[1]:-$0}"
@@ -11,7 +11,7 @@ jetsonizer_log_init() {
 
     local target="${JETSONIZER_LOG_DIR:-$JETSONIZER_LOG_DIR_DEFAULT}"
     if ! mkdir -p "$target" 2>/dev/null; then
-        local fallback="${HOME:-/root}/.cache/Jetsonizer"
+        local fallback="$JETSONIZER_LOG_DIR_DEFAULT"
         if mkdir -p "$fallback" 2>/dev/null; then
             target="$fallback"
             JETSONIZER_LOG_DIR_FALLBACK=1

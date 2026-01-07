@@ -20,7 +20,7 @@ if [ -f "$LOGGER_SCRIPT" ]; then
   jetsonizer_log_init
 fi
 
-LOG_DIR="${JETSONIZER_LOG_DIR:-/home/.cache/Jetsonizer}"
+LOG_DIR="${JETSONIZER_LOG_DIR:-/home/${SUDO_USER:-${USER:-$(id -un 2>/dev/null || echo root)}}/.cache/Jetsonizer}"
 BUILD_LOG="$LOG_DIR/opencv_build_wheel.log"
 PIP_LOG="$LOG_DIR/opencv_pip_install.log"
 

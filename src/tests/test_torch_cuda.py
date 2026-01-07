@@ -4,12 +4,27 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import os
+import pwd
 import sys
 import traceback
 from pathlib import Path
 from typing import Any, Callable, Dict
 
-LOG_DIR = Path("/home/.cache/Jetsonizer")
+def _default_log_dir() -> Path:
+    env_dir = os.environ.get("JETSONIZER_LOG_DIR")
+    if env_dir:
+        return Path(env_dir)
+    user = os.environ.get("SUDO_USER") or os.environ.get("USER")
+    if not user:
+        try:
+            user = pwd.getpwuid(os.getuid()).pw_name
+        except KeyError:
+            user = Path.home().name
+    return Path("/home") / user / ".cache" / "Jetsonizer"
+
+
+LOG_DIR = _default_log_dir()
 
 
 def _write_log(exc: BaseException) -> Path | None:
@@ -32,7 +47,7 @@ def _report_failure(exc: BaseException) -> None:
     if log_path:
         print(f"Full error and logs written to {log_path}", file=sys.stderr)
     else:
-        print("Failed to write log file under /home/.cache/Jetsonizer.", file=sys.stderr)
+        print(f"Failed to write log file under {LOG_DIR}.", file=sys.stderr)
 
 def _safe_call(func: Callable[[], Any], default: Any) -> Any:
     """Call a zero-arg function and return a default if it raises."""

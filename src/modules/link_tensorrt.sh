@@ -536,7 +536,7 @@ for pkg in "${PACKAGE_CHOICES[@]}"; do
     fi
 done
 
-LOG_DIR="${JETSONIZER_LOG_DIR:-/home/.cache/Jetsonizer}"
+LOG_DIR="${JETSONIZER_LOG_DIR:-/home/${SUDO_USER:-${USER:-$(id -un 2>/dev/null || echo root)}}/.cache/Jetsonizer}"
 mkdir -p "$LOG_DIR"
 INSTALL_LOG="$(mktemp -p "$LOG_DIR" tensorrt-pip-XXXXXX.log 2>/dev/null || mktemp -t tensorrt-pip-XXXXXX.log)"
 if command -v jetsonizer_append_trap >/dev/null 2>&1; then
