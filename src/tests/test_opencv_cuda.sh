@@ -15,6 +15,15 @@ if command -v gum > /dev/null 2>&1; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_log_init
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 TEST_MODULE="${SCRIPT_DIR}/test_opencv_cuda.py"
 
 log_info() {
@@ -39,6 +48,10 @@ log_info "Running OpenCV CUDA validation with $PYTHON_BIN..."
 
 if ! test_output=$("$PYTHON_BIN" "$TEST_MODULE" 2>&1); then
     log_error "❌ OpenCV CUDA validation failed."
+    if [ -n "${JETSONIZER_LOG_FILE:-}" ]; then
+        printf '%s\n' "$test_output" >> "$JETSONIZER_LOG_FILE"
+        log_error "Full error and logs written to $JETSONIZER_LOG_FILE"
+    fi
     printf '%s\n' "$test_output" >&2
     exit 1
 fi

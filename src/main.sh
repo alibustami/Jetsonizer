@@ -6,6 +6,13 @@ TESTS_DIR="$BASE_DIR/tests"
 RESOURCES_DIR="$BASE_DIR/resources"
 UTILS_DIR="$BASE_DIR/utils"
 WHICH_PYTHON_SCRIPT="$UTILS_DIR/which_python.sh"
+LOGGER_SCRIPT="$UTILS_DIR/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 
 CATEGORY_NAMES=(
     "ML & Vision stack"

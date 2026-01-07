@@ -3,8 +3,36 @@
 from __future__ import annotations
 
 import argparse
+import datetime
+import sys
+import traceback
+from pathlib import Path
 from typing import Any, Callable, Dict
 
+LOG_DIR = Path("/home/.cache/Jetsonizer")
+
+
+def _write_log(exc: BaseException) -> Path | None:
+    try:
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_path = LOG_DIR / f"{Path(__file__).stem}_{timestamp}.log"
+        with log_path.open("w", encoding="utf-8") as handle:
+            handle.write(f"Timestamp: {timestamp}\n")
+            handle.write(f"Script: {Path(__file__).name}\n")
+            handle.write("Traceback:\n")
+            handle.writelines(traceback.format_exception(type(exc), exc, exc.__traceback__))
+        return log_path
+    except Exception:
+        return None
+
+
+def _report_failure(exc: BaseException) -> None:
+    log_path = _write_log(exc)
+    if log_path:
+        print(f"Full error and logs written to {log_path}", file=sys.stderr)
+    else:
+        print("Failed to write log file under /home/.cache/Jetsonizer.", file=sys.stderr)
 
 def _safe_call(func: Callable[[], Any], default: Any) -> Any:
     """Call a zero-arg function and return a default if it raises."""
@@ -89,4 +117,13 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as exc:
+        code = exc.code
+        if (isinstance(code, int) and code != 0) or (not isinstance(code, int) and code is not None):
+            _report_failure(exc)
+        raise
+    except Exception as exc:  # pylint: disable=broad-except
+        _report_failure(exc)
+        raise SystemExit(1) from exc

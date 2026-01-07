@@ -7,6 +7,13 @@ SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CHECK_PIP_SCRIPT="$SRC_ROOT/utils/check_pip.sh"
 CUDA_NPP_SCRIPT="$SRC_ROOT/utils/ensure_cuda_npp.sh"
 TORCH_CUDA_TEST_SCRIPT="$SRC_ROOT/tests/test_torch_cuda.py"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 REQUIRED_CUDA_LIBS=(
     "libcudart.so.13"
     "libcublas.so.13"
@@ -165,7 +172,11 @@ DOWNLOADER=$(ensure_downloader) || {
 }
 
 DOWNLOAD_DIR="$(mktemp -d 2>/dev/null || mktemp -d -t torch-wheel)"
-trap 'rm -rf "$DOWNLOAD_DIR"' EXIT
+if command -v jetsonizer_append_trap >/dev/null 2>&1; then
+    jetsonizer_append_trap EXIT "rm -rf \"$DOWNLOAD_DIR\""
+else
+    trap 'rm -rf "$DOWNLOAD_DIR"' EXIT
+fi
 WHEEL_PATH="$DOWNLOAD_DIR/$WHEEL_FILENAME"
 
 gum style --foreground 82 --bold "Downloading PyTorch wheel from Jetson AI Lab..."

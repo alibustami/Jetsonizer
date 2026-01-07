@@ -5,6 +5,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONDA_VARIANTS_FILE="$SRC_ROOT/resources/conda_variants.txt"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 
 if [ "${EUID:-$(id -u)}" -eq 0 ] && [ -n "${SUDO_USER:-}" ]; then
     gum style --foreground 196 --bold "❌ Run Miniconda installation without sudo so it installs to your user home."

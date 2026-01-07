@@ -2,6 +2,15 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOGGER_SCRIPT="$SCRIPT_DIR/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
+
 SCRIPT_NAME="$(basename "$0")"
 
 log_error() {

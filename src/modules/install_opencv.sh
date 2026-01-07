@@ -14,7 +14,14 @@ WHEEL_URL="https://pypi.jetson-ai-lab.io/sbsa/cu130/+f/6e7/7b9ad7aeba994/opencv_
 WHEEL_SHA256="6e77b9ad7aeba994db0b443c047a4729c379a21617f64497c0d22f992d9b7be2"
 WHEEL_FILENAME="opencv_contrib_python_rolling-4.13.0-cp312-cp312-linux_aarch64.whl"
 EXPECTED_PYTHON_MM="3.12"
-LOG_DIR="${JETSONIZER_LOG_DIR:-$HOME/.cache/jetsonizer}"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_log_init
+fi
+
+LOG_DIR="${JETSONIZER_LOG_DIR:-/home/.cache/Jetsonizer}"
 PIP_LOG="$LOG_DIR/opencv_pip_install.log"
 
 mkdir -p "$LOG_DIR"
@@ -28,6 +35,10 @@ handle_err() {
 }
 
 trap 'handle_err' ERR
+if command -v jetsonizer_enable_err_trap >/dev/null 2>&1; then
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 
 export PIP_NO_INPUT=1
 export PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -150,7 +161,11 @@ DOWNLOADER=$(ensure_downloader) || {
 }
 
 DOWNLOAD_DIR="$(mktemp -d 2>/dev/null || mktemp -d -t opencv-wheel)"
-trap 'rm -rf "$DOWNLOAD_DIR"' EXIT
+if command -v jetsonizer_append_trap >/dev/null 2>&1; then
+    jetsonizer_append_trap EXIT "rm -rf \"$DOWNLOAD_DIR\""
+else
+    trap 'rm -rf "$DOWNLOAD_DIR"' EXIT
+fi
 WHEEL_PATH="$DOWNLOAD_DIR/$WHEEL_FILENAME"
 
 gum style --foreground 82 --bold "Downloading OpenCV wheel from Jetson AI Lab..."

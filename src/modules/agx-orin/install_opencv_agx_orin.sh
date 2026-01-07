@@ -13,7 +13,14 @@ WHICH_PYTHON_SCRIPT="$SRC_ROOT/utils/which_python.sh"
 
 EXPECTED_PYTHON_MM="${EXPECTED_PYTHON_MM:-3.10}"
 
-LOG_DIR="${JETSONIZER_LOG_DIR:-$HOME/.cache/jetsonizer}"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+  # shellcheck source=/dev/null
+  source "$LOGGER_SCRIPT"
+  jetsonizer_log_init
+fi
+
+LOG_DIR="${JETSONIZER_LOG_DIR:-/home/.cache/Jetsonizer}"
 BUILD_LOG="$LOG_DIR/opencv_build_wheel.log"
 PIP_LOG="$LOG_DIR/opencv_pip_install.log"
 
@@ -41,6 +48,10 @@ handle_err() {
   exit "$exit_code"
 }
 trap 'handle_err' ERR
+if command -v jetsonizer_enable_err_trap >/dev/null 2>&1; then
+  jetsonizer_enable_err_trap
+  jetsonizer_enable_exit_trap
+fi
 
 # Pip env hardening (same spirit as your script)
 export PIP_NO_INPUT=1
@@ -237,6 +248,7 @@ gum style --foreground 82 --bold "✅ Built wheel: $BUILT_WHEEL"
 gum style --foreground 82 --bold "Installing built wheel (logs: $PIP_LOG)..."
 "$PYTHON_BIN" -m pip install "${PIP_INSTALL_FLAGS[@]}" --force-reinstall --no-deps "$BUILT_WHEEL" 2>&1 | tee "$PIP_LOG"
 "$PYTHON_BIN" -m pip install "numpy<2" --force-reinstall
+# "$PYTHON_BIN" -m pip install numpy
 
 # Sanity checks
 gum style --foreground 82 --bold "Validating import and CUDA availability..."

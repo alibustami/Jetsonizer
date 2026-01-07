@@ -2,6 +2,16 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
+
 TARGET_USER="${SUDO_USER:-$(id -un)}"
 TARGET_HOME="$(getent passwd "$TARGET_USER" | cut -d: -f6 || true)"
 if [ -z "$TARGET_HOME" ] && [ -n "$TARGET_USER" ]; then

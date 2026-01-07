@@ -8,6 +8,13 @@ REPO_ROOT="$(cd "$SRC_ROOT/.." && pwd)"
 CHECK_PIP_SCRIPT="$SRC_ROOT/utils/check_pip.sh"
 TORCH_CUDA_TEST_SCRIPT="$SRC_ROOT/tests/test_torch_cuda.py"
 WHICH_PYTHON_SCRIPT="$SRC_ROOT/utils/which_python.sh"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 
 if [ ! -x "$WHICH_PYTHON_SCRIPT" ]; then
     gum style --foreground 196 --bold "❌ Missing Python detector helper at $WHICH_PYTHON_SCRIPT."

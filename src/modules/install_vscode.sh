@@ -1,5 +1,15 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
+
 if command -v code &> /dev/null; then
     gum style --foreground 214 --bold "⚠️  VS Code is already installed."
     REINSTALL=$(gum confirm "Would you like to reinstall VS Code?" --affirmative="Yes" --negative="No" --prompt.foreground="82" --selected.foreground="82" --unselected.foreground="82" --selected.background="82" && echo "yes" || echo "no")

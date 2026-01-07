@@ -19,6 +19,13 @@ TENSORRT_PIP_OPTIONS=(tensorrt tensorrt_dispatch tensorrt_lean)
 VALID_PACKAGE_DIRS=()
 PACKAGE_DIR=""
 USE_TARBALL=1
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 
 gum style --foreground 82 --bold "TensorRT Tarball Linking Assistant"
 gum style --foreground 82 --bold "We'll link the TensorRT libraries and install the matching Python packages."
@@ -529,8 +536,14 @@ for pkg in "${PACKAGE_CHOICES[@]}"; do
     fi
 done
 
-INSTALL_LOG="$(mktemp -t tensorrt-pip-XXXXXX.log)"
-trap 'rm -f "$INSTALL_LOG"' EXIT
+LOG_DIR="${JETSONIZER_LOG_DIR:-/home/.cache/Jetsonizer}"
+mkdir -p "$LOG_DIR"
+INSTALL_LOG="$(mktemp -p "$LOG_DIR" tensorrt-pip-XXXXXX.log 2>/dev/null || mktemp -t tensorrt-pip-XXXXXX.log)"
+if command -v jetsonizer_append_trap >/dev/null 2>&1; then
+    jetsonizer_append_trap EXIT 'if [ "$?" -eq 0 ]; then rm -f "$INSTALL_LOG"; fi'
+else
+    trap 'if [ "$?" -eq 0 ]; then rm -f "$INSTALL_LOG"; fi' EXIT
+fi
 gum style --foreground 82 --bold "Installing TensorRT Python packages into $PYTHON_BIN..."
 gum style --foreground 82 "Install targets: ${INSTALL_TARGETS[*]}"
 

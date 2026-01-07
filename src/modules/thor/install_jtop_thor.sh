@@ -2,6 +2,16 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
+
 gum style --foreground 82 --bold "Installing jtop (jetson-stats) ..."
 
 require_cmd() {

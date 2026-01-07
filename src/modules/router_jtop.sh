@@ -5,6 +5,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SRC_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 REPO_ROOT="$(cd "$SRC_ROOT/.." && pwd)"
+LOGGER_SCRIPT="$SRC_ROOT/utils/logger.sh"
+if [ -f "$LOGGER_SCRIPT" ]; then
+    # shellcheck source=/dev/null
+    source "$LOGGER_SCRIPT"
+    jetsonizer_enable_err_trap
+    jetsonizer_enable_exit_trap
+fi
 
 AGX_ORIN_SCRIPT="$SCRIPT_DIR/agx-orin/install_jtop_agx_orin.sh"
 THOR_SCRIPT="$SCRIPT_DIR/thor/install_jtop_thor.sh"
