@@ -17,6 +17,7 @@ AGX_ORIN_SCRIPT="$SCRIPT_DIR/agx-orin/install_jtop_agx_orin.sh"
 THOR_SCRIPT="$SCRIPT_DIR/thor/install_jtop_thor.sh"
 MODEL_FILE="/proc/device-tree/model"
 TARGET_MODEL="NVIDIA Jetson AGX Orin Developer Kit"
+THOR_TARGET_MODEL="NVIDIA Jetson AGX Thor Development Kit"
 
 if [ ! -f "$AGX_ORIN_SCRIPT" ]; then
     gum style --foreground 196 --bold "ERROR: Missing AGX Orin jtop installer at $AGX_ORIN_SCRIPT."
@@ -38,10 +39,7 @@ fi
 if [ "$MODEL_VALUE" = "$TARGET_MODEL" ]; then
     gum style --foreground 82 --bold "Detected $TARGET_MODEL. Installing AGX Orin jtop..."
     bash "$AGX_ORIN_SCRIPT"
-else
-    if [ -n "$MODEL_VALUE" ]; then
-        gum style --foreground 214 --bold "Detected model: $MODEL_VALUE"
-    fi
-    gum style --foreground 82 --bold "Installing Thor jtop..."
+elif [ "$MODEL_VALUE" = "$THOR_TARGET_MODEL" ]; then
+    gum style --foreground 82 --bold "Detected $THOR_TARGET_MODEL. Installing Thor jtop..."
     bash "$THOR_SCRIPT"
 fi
