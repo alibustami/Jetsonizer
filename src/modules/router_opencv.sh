@@ -17,7 +17,7 @@ AGX_ORIN_SCRIPT="$SCRIPT_DIR/agx-orin/install_opencv_agx_orin.sh"
 THOR_SCRIPT="$SCRIPT_DIR/thor/install_opencv_thor.sh"
 MODEL_FILE="/proc/device-tree/model"
 TARGET_MODEL="NVIDIA Jetson AGX Orin Developer Kit"
-THOR_TARGET_MODEL="NVIDIA Jetson AGX Thor Development Kit"
+THOR_TARGET_MODEL="NVIDIA Jetson AGX Thor Developer Kit"
 
 if [ ! -f "$AGX_ORIN_SCRIPT" ]; then
     gum style --foreground 196 --bold "❌ Missing AGX Orin OpenCV installer at $AGX_ORIN_SCRIPT."
