@@ -12,7 +12,7 @@ if [ -f "$LOGGER_SCRIPT" ]; then
     jetsonizer_enable_exit_trap
 fi
 
-gum style --foreground 82 --bold "Installing jtop (jetson-stats) for AGX Orin..."
+gum style --foreground 82 --bold "Installing jtop (jetson-stats) for Orin..."
 
 require_cmd() {
     local cmd="$1"

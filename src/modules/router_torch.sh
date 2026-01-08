@@ -18,6 +18,7 @@ THOR_SCRIPT="$SCRIPT_DIR/thor/install_torch_thor.sh"
 MODEL_FILE="/proc/device-tree/model"
 TARGET_MODEL="NVIDIA Jetson AGX Orin Developer Kit"
 THOR_TARGET_MODEL="NVIDIA Jetson AGX Thor Developer Kit"
+ORIN_NANO_MODEL="NVIDIA Jetson Orin Nano Engineering Reference Developer Kit Super"
 
 if [ ! -f "$AGX_ORIN_SCRIPT" ]; then
     gum style --foreground 196 --bold "❌ Missing AGX Orin Torch installer at $AGX_ORIN_SCRIPT."
@@ -38,6 +39,9 @@ fi
 
 if [ "$MODEL_VALUE" = "$TARGET_MODEL" ]; then
     gum style --foreground 82 --bold "Detected $TARGET_MODEL. Installing AGX Orin PyTorch..."
+    bash "$AGX_ORIN_SCRIPT"
+elif [ "$MODEL_VALUE" = "$ORIN_NANO_MODEL" ]; then
+    gum style --foreground 82 --bold "Detected $ORIN_NANO_MODEL. Installing Orin Nano Torch..."
     bash "$AGX_ORIN_SCRIPT"
 elif [ "$MODEL_VALUE" = "$THOR_TARGET_MODEL" ]; then
     gum style --foreground 82 --bold "Detected $THOR_TARGET_MODEL. Installing Thor PyTorch..."

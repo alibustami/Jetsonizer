@@ -48,7 +48,7 @@ export PIP_DEFAULT_TIMEOUT="${PIP_DEFAULT_TIMEOUT:-60}"
 export PIP_BREAK_SYSTEM_PACKAGES=1
 export PIP_ROOT_USER_ACTION=ignore
 
-gum style --foreground 82 --bold "Installing OpenCV with CUDA-enabled wheel for Jetson AGX Orin..."
+gum style --foreground 82 --bold "Installing OpenCV with CUDA-enabled wheel for Jetson Orin..."
 
 if [ ! -x "$WHICH_PYTHON_SCRIPT" ]; then
     gum style --foreground 196 --bold "❌ Missing Python detector helper at $WHICH_PYTHON_SCRIPT."
