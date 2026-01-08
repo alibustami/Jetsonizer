@@ -19,6 +19,7 @@
 [Supported Jetson Models](#supported-jetson-models) •
 [Usage](#usage) •
 [Contributing](#-contributing)
+[Citation](#-cite-us) •
 
 </div>
 
@@ -101,6 +102,25 @@ All Jetsonizer features listed above are working and tested on each model.
 ## 📖 Documentation
 
 For more details, visit the [project website](https://alibustami.github.io/Jetsonizer/).
+
+## 📚 Cite Us
+
+If you use Jetsonizer in your research, please cite it (DOI: `10.5281/zenodo.18181257`).
+
+```bibtex
+@software{jetsonizer,
+  author       = {Ali Al-Bustami and
+                  Zaid Ghazal and
+                  Humberto Ruiz-Ochoa},
+  title        = {alibustami/Jetsonizer: Jetsonizer v1.0.0},
+  month        = jan,
+  year         = 2026,
+  publisher    = {Zenodo},
+  version      = {v1.0.0},
+  doi          = {10.5281/zenodo.18181257},
+  url          = {https://doi.org/10.5281/zenodo.18181257},
+}
+```
 
 ## 🤝 Contributing
 
