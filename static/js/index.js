@@ -75,4 +75,54 @@ $(document).ready(function() {
 
     bulmaSlider.attach();
 
+    var copyButton = document.getElementById('copy-citation');
+    var citationBlock = document.getElementById('citation-bibtex');
+
+    if (copyButton && citationBlock) {
+      var label = copyButton.querySelector('.copy-label');
+      var defaultLabel = label ? label.textContent : '';
+      var resetTimer;
+
+      function showCopyStatus(message) {
+        if (!label) {
+          return;
+        }
+        label.textContent = message;
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(function() {
+          label.textContent = defaultLabel;
+        }, 2000);
+      }
+
+      function fallbackCopy(text) {
+        var textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'absolute';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          var success = document.execCommand('copy');
+          showCopyStatus(success ? 'Copied!' : 'Copy failed');
+        } catch (err) {
+          showCopyStatus('Copy failed');
+        }
+        document.body.removeChild(textArea);
+      }
+
+      copyButton.addEventListener('click', function() {
+        var text = citationBlock.innerText.trim();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function() {
+            showCopyStatus('Copied!');
+          }).catch(function() {
+            fallbackCopy(text);
+          });
+        } else {
+          fallbackCopy(text);
+        }
+      });
+    }
+
 })
