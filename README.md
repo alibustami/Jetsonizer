@@ -16,6 +16,7 @@
 [Installation](#-installation) •
 [Features](#-features) •
 [Supported Tools](#️-currently-supported-tools) •
+[Supported Jetson Models](#supported-jetson-models) •
 [Usage](#usage) •
 [Contributing](#-contributing)
 
@@ -64,22 +65,38 @@ Follow the interactive prompts to configure your Jetson device.
 Jetsonizer can install and configure the following tools:
 
 ### ML & Vision Stack
-- **OpenCV (CUDA)** - Computer vision with GPU acceleration
-- **PyTorch (CUDA)** - Deep learning framework with CUDA support
+- **OpenCV (CUDA)**
+- **PyTorch (CUDA)**
 - **TensorRT** - High-performance deep learning inference
 
 ### Python Env & Tooling
-- **MiniConda** - Lightweight Python distribution
-- **uv** - Ultra-fast Python package installer
+- **MiniConda**
+- **uv** 
 
 ### IDEs
-- **VS Code** - Popular code editor with remote development support
+- **VS Code**
 
 ### Monitoring
 - **jtop** - System monitoring tool for Jetson devices
 
 ### Browsers
-- **Brave Browser** - Privacy-focused web browser
+- **Brave Browser**
+
+## Supported Jetson Models
+
+All Jetsonizer features listed above are working and tested on each model.
+
+| Feature | AGX Thor | AGX Orin | Orin Nano |
+| --- | --- | --- | --- |
+| OpenCV (CUDA) | ✅ | ✅ | ✅ |
+| PyTorch (CUDA) | ✅ | ✅ | ✅ |
+| TensorRT | ✅ | ✅ | ✅ |
+| MiniConda | ✅ | ✅ | ✅ |
+| uv | ✅ | ✅ | ✅ |
+| VS Code | ✅ | ✅ | ✅ |
+| jtop | ✅ | ✅ | ✅ |
+| Brave Browser | ✅ | ✅ | ✅ |
+
 
 ## 📖 Documentation
 
