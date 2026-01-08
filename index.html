@@ -44,6 +44,37 @@
     .nvidia-card strong {
         color: white;
     }
+    .nvidia-table {
+      border: 1px solid #76B900;
+    }
+    .nvidia-table thead th {
+      background-color: #76B900;
+      color: #ffffff;
+      border-color: #6aa600;
+      text-align: center;
+    }
+    .nvidia-table thead th:first-child {
+      text-align: left;
+    }
+    .nvidia-table tbody td,
+    .nvidia-table tbody th {
+      border-color: #d7ebc2;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .nvidia-table tbody th {
+      font-weight: 600;
+      text-align: left;
+    }
+    .nvidia-table tbody tr:nth-child(even) {
+      background-color: #f6fbe9;
+    }
+    .nvidia-table tbody tr:hover {
+      background-color: #eaf6d0;
+    }
+    .nvidia-check {
+      color: #76B900;
+    }
   </style>
 
   <!-- JS -->
@@ -202,6 +233,73 @@
           </div>
         </div>
         
+        <h2 class="title is-3 has-text-centered mt-6">Supported Jetson Models</h2>
+        <div class="content">
+          <p>All Jetsonizer features listed above are working and tested on each model.</p>
+          <div class="table-container">
+            <table class="table is-fullwidth is-striped is-hoverable nvidia-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>AGX Thor</th>
+                  <th>AGX Orin</th>
+                  <th>Orin Nano</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>OpenCV (CUDA)</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+                <tr>
+                  <th>PyTorch (CUDA)</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+                <tr>
+                  <th>TensorRT</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+                <tr>
+                  <th>MiniConda</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+                <tr>
+                  <th>uv</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+                <tr>
+                  <th>VS Code</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+                <tr>
+                  <th>jtop</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+                <tr>
+                  <th>Brave Browser</th>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                  <td><span class="icon nvidia-check"><i class="fas fa-check"></i></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <h2 class="title is-3 has-text-centered mt-6">See it in Action</h2>
         
         <figure class="image is-centered">
