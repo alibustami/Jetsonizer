@@ -52,6 +52,12 @@ Jetsonizer is implemented as an interactive CLI that presents a guided menu of s
 
 The terminal UI is built using Gum [@gum], enabling an approachable interactive workflow while preserving a transparent, scriptable backend for reproducibility and troubleshooting.
 
+Example screens from the interactive CLI are shown below.
+
+![Jetsonizer main menu with setup task categories.](assets/home.png)
+
+![CUDA-enabled OpenCV validation output during setup.](assets/cv2_success.png)
+
 # Research impact
 
 Jetsonizer reduces the time and variability involved in preparing Jetson devices for robotics and embedded AI research by converting common bring-up tasks into repeatable, verifiable steps. To support archival and scholarly citation, a versioned release of Jetsonizer is archived on Zenodo (DOI: 10.5281/zenodo.18181257).
