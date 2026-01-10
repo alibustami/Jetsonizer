@@ -87,7 +87,7 @@ Jetsonizer can install and configure the following tools:
 
 All Jetsonizer features listed above are working and tested on each model.
 
-| Feature | Thor | AGX Orin | Orin Nano |
+| Feature | Thor (JP 7.0) | AGX Orin (JP 6.2) | Orin Nano (JP 6.2) |
 | --- | --- | --- | --- |
 | OpenCV (CUDA) | ✅ | ✅ | ✅ |
 | PyTorch (CUDA) | ✅ | ✅ | ✅ |
