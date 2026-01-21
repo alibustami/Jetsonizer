@@ -8,6 +8,7 @@
 [![Platform](https://img.shields.io/badge/platform-NVIDIA%20Jetson-76B900.svg)](https://developer.nvidia.com/embedded-computing)
 [![Shell](https://img.shields.io/badge/shell-bash-green.svg)](https://www.gnu.org/software/bash/)
 [![GitHub Stars](https://img.shields.io/github/stars/alibustami/Jetsonizer?style=social)](https://github.com/alibustami/Jetsonizer)
+[![status](https://joss.theoj.org/papers/56a2c08eaf753d86dc2d2ba08776e095/status.svg)](https://joss.theoj.org/papers/56a2c08eaf753d86dc2d2ba08776e095)
 
 ---
 
